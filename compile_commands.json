@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/mpaulson/personal/aoc/build/src/day1",
+  "command": "/usr/lib/ccache/cc   -ggdb -D_DEBUG -Wextra -Wall -Wunreachable-code -O0 -D_LARGEFILE64_SOURCE   -o CMakeFiles/day1.dir/day1.c.o   -c /home/mpaulson/personal/aoc/src/day1/day1.c",
+  "file": "/home/mpaulson/personal/aoc/src/day1/day1.c"
+}
+]
