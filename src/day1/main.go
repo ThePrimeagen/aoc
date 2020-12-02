@@ -2,6 +2,7 @@ package main
 
 import "log"
 
+/*
 var input = []int{
     1721,
     979,
@@ -10,7 +11,8 @@ var input = []int{
     675,
     1456,
 }
-/*
+*/
+
 var input = []int{
     1046,
     1565,
@@ -213,7 +215,6 @@ var input = []int{
     1546,
     1535,
 }
-*/
 
 func find2020(arr []int) int {
     for i := 0; i < len(input); i++ {
