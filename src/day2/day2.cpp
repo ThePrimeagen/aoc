@@ -1032,24 +1032,20 @@ int main() {
         char letterToCheck = it.substr(0, 1)[0];
         it.erase(0, 3);
 
-        // shortcut this...
-        // literally, who cares..
         int counts[26] = {};
 
         // Part 1
-        /*
         for (const auto& c : it) {
             counts[c - 'a']++;
         }
 
         int found = counts[letterToCheck - 'a'];
-        printf("Found count %d , must have %d - %d\n", found, min, max);
         if (found <= max && found >= min) {
             count++;
         }
-        */
 
         // Part 2
+{
         counts[it[min - 1] - 'a'] += 8;
         counts[it[max - 1] - 'a'] += 8;
         int D = counts[letterToCheck - 'a'];
@@ -1057,6 +1053,7 @@ int main() {
         if (8==D) {
             count++;
         }
+}
     }
 
     printf("Bad Pisswards %d\n", count);
