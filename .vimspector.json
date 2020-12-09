@@ -1,0 +1,19 @@
+{
+  "configurations": {
+    "test": {
+      "adapter": "vscode-node",
+      "configuration": {
+        "request": "launch",
+        "protocol": "auto",
+        "stopOnEntry": true,
+        "console": "integratedTerminal",
+        "program": "${workspaceRoot}/node_modules/.bin/ts-node",
+        "args": ["${file}"],
+        "smartStep": true,
+        "cwd": "${workspaceRoot}"
+      }
+    }
+  }
+}
+
+
