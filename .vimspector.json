@@ -1,16 +1,16 @@
 {
   "configurations": {
     "test": {
-      "adapter": "vscode-node",
+      "adapter": "vscode-cpptools",
       "configuration": {
         "request": "launch",
-        "protocol": "auto",
-        "stopOnEntry": true,
-        "console": "integratedTerminal",
-        "program": "${workspaceRoot}/node_modules/.bin/ts-node",
-        "args": ["${file}"],
-        "smartStep": true,
-        "cwd": "${workspaceRoot}"
+        "program": "${workspaceRoot}/build/src/day11/day11",
+        "args": [],
+        "cwd": "${workspaceRoot}",
+        "environment": [],
+        "externalConsole": true,
+        "stopAtEntry": true,
+        "MIMode": "gdb"
       }
     }
   }

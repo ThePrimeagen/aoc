@@ -7,9 +7,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Check for correct compiler
 # Using C compiler GNUCXX for c++ compiler
-IF(CMAKE_COMPILER_IS_GNUCC)
-  MESSAGE(STATUS "=== GCC C COMPILER DETECTED")
-  SET(CMAKE_C_FLAGS "-ggdb -D_DEBUG -Wextra -Wall -Wunreachable-code -O0 -D_LARGEFILE64_SOURCE")
-ENDIF(CMAKE_COMPILER_IS_GNUCC)
+SET(CMAKE_CXX_FLAGS "-ggdb -D_DEBUG -Wextra -Wall -Wunreachable-code -O0 -D_LARGEFILE64_SOURCE")
+# SET(CMAKE_CXX_FLAGS "-O3")
 
 add_subdirectory(src)

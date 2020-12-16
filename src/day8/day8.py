@@ -1,7 +1,6 @@
 import os
 from copy import deepcopy
 
-
 def test(lines):
     seen = [False for i in lines]
     idx = 0
