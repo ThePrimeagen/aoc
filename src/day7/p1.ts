@@ -53,8 +53,6 @@ contents.filter(x => x.length).forEach(line => {
     } while (splitLines.length >= 4);
 });
 
-const _8 = "shiny gold";
-
 let totalCount = 0;
 function countEmBoys(walkList: BNode[]) {
     walkList.forEach(n => {
@@ -65,6 +63,7 @@ function countEmBoys(walkList: BNode[]) {
     });
 }
 
+const _8 = "shiny gold";
 function giveMeTheGold(node: BNode, walkList: BNode[] = []) {
     if (node.D===_8) {
         countEmBoys(walkList);
