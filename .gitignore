@@ -2,3 +2,11 @@ build
 compile_commands.json
 
 node_modules/
+
+
+# Added by cargo
+
+target
+Cargo.lock
+artifacts
+cache

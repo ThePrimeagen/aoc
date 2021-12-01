@@ -1,0 +1,25 @@
+{
+  "name": "yayayaya",
+  "version": "1.0.0",
+  "main": "scripts/deploy.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.2",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@types/chai": "^4.2.22",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.11.9",
+    "chai": "^4.3.4",
+    "ethereum-waffle": "^3.4.0",
+    "ethers": "^5.5.1",
+    "hardhat": "^2.6.8",
+    "hardhat-gas-reporter": "github:cgewecke/hardhat-gas-reporter",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.2"
+  },
+  "dependencies": {
+    "eth-gas-reporter": "cgewecke/eth-gas-reporter"
+  },
+  "repository": "git@github.com:ThePrimeagen/aoc.git",
+  "author": "mpaulson <mpaulson@netflix.com>"
+}
