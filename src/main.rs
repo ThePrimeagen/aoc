@@ -1,71 +1,133 @@
 #![feature(int_abs_diff)]
 
-#[macro_use]
-extern crate lazy_static;
-
 use std::collections::{HashMap, HashSet};
-// consht mut data: Vec<Vec<u32>> = include_str!("day10.test");
+use std::str::FromStr;
 
-lazy_static! {
-    static ref SCORES: HashMap<char, u64> = HashMap::from([
-        ('(', 1),
-        ('[', 2),
-        ('{', 3),
-        ('<', 4),
-    ]);
-
-    static ref OPENINGS: HashSet<char> = HashSet::from([
-        '(',
-        '[',
-        '{',
-        '<',
-    ]);
-
-    // Going to the hacking session
-    static ref OPPOSING: HashMap<char, char> = HashMap::from([
-        ('(', ')'),
-        ('[', ']'),
-        ('{', '}'),
-        ('<', '>'),
-    ]);
+struct Point {
+    x: usize,
+    y: usize,
 }
 
-fn get_stack(line: &str) -> Option<Vec<char>> {
-    let mut stack: Vec<char> = vec![];
-    let mut is_corrupted = false;
+enum Axis {
+    X(usize),
+    Y(usize),
+}
 
-    for c in line.chars() {
-        if OPENINGS.contains(&c) {
-            stack.push(c);
+impl FromStr for Point {
+    type Err = std::io::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let (x, y) = &s.split_once(",").unwrap();
+        let x = x.parse().unwrap();
+        let y = y.parse().unwrap();
+        return Ok(Point { x, y });
+    }
+}
+
+impl FromStr for Axis {
+    type Err = std::io::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let (axis, value) = &s
+            .split_once("fold along ")
+            .unwrap()
+            .1
+            .split_once("=")
+            .unwrap();
+        let value = value.parse().unwrap();
+
+        return if *axis == "y" {
+            Ok(Axis::Y(value))
         } else {
-            if let Some(last) = stack.pop() {
-                if OPPOSING[&last] != c {
-                    is_corrupted = true;
-                    break;
+            Ok(Axis::X(value))
+        };
+    }
+}
+
+fn fold(board: Vec<Vec<usize>>, fold: &Axis) -> Vec<Vec<usize>> {
+    let mut max_y: usize = board.len();
+    let mut max_x: usize = board[0].len();
+    let mut next_start_x = 0;
+    let mut next_start_y = 0;
+    let mut y_fold = false;
+
+    match fold {
+        Axis::Y(y) => {
+            max_y = *y;
+            next_start_y = *y + 1
+        }
+        Axis::X(x) => {
+            max_x = *x;
+            next_start_x = *x + 1
+        }
+    }
+
+    println!("fold max_x {}", max_x);
+    println!("fold may_y {}", max_y);
+
+    // copy first board
+    let mut new_board = vec![vec![0; max_x]; max_y];
+    for y in 0..max_y {
+        for x in 0..max_x {
+            new_board[y][x] = board[y][x];
+        }
+    }
+
+    for y in next_start_y..board.len() {
+        for x in next_start_x..board[0].len() {
+
+            if board[y][x] == 1 {
+                let mut y = y - next_start_y;
+                let mut x = x - next_start_x;
+
+                if y_fold {
+                    y = new_board.len() - y - 1;
+                } else {
+                    x = new_board[0].len() - x - 1;
                 }
+
+                new_board[y][x] = 1;
             }
         }
     }
 
-    if is_corrupted {
-        return None;
-    }
-    return Some(stack)
+    return new_board;
 }
 
+fn print_board(board: &Vec<Vec<usize>>) {
+    println!("Bounds ({} {})", board[0].len(), board.len());
+    for line in board {
+        for x in line {
+            print!("{}", if *x == 1 { "#" } else { " " });
+        }
+       println!();
+    }
+}
 fn main() {
-    let mut count: Vec<u64> = include_str!("day10.input")
+    let (points, folds) = include_str!("day13.input")
         .trim()
-        .lines()
-        .filter_map(get_stack)
-        .map(|missing|
-            missing.iter().rev().fold(0, |acc, x| {
-                (acc * 5) + SCORES[x]
-            })
-        )
-        .collect();
+        .split_once("\n\n")
+        .unwrap();
 
-    count.sort();
+    let points: Vec<Point> = points.lines().map(str::parse).map(Result::unwrap).collect();
 
-    println!("{:?} Powered by RustLang:tm:", count[count.len() / 2]);
+    let folds: Vec<Axis> = folds.lines().map(str::parse).map(Result::unwrap).collect();
+
+    let (x_max, y_max) = points
+        .iter()
+        .fold((0, 0), |(x, y), point| (point.x.max(x), point.y.max(y)));
+
+    println!("Max Points {} {}", x_max, y_max);
+    let mut board: Vec<Vec<usize>> = vec![vec![0; x_max + 1]; y_max + 1];
+
+    for p in &points {
+        board[p.y][p.x] = 1;
+    }
+
+    folds.iter().fold(board, |board, _fold| {
+        let board = fold(board, _fold);
+
+        print_board(&board);
+
+        return board;
+    });
+
 }
