@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+cat src/bin/input2_1.test | sed 's/ /+/' \
+    | sed 's/\(A+Y\|B+Z\|C+X\)/6+\1/' \
+    | sed 's/\(A+Z\|B+X\|C+Y\)/0+\1/' \
+    | sed 's/\(A+X\|B+Y\|C+Z\)/3+\1/' \
+    | tr 'ABCXYZ' '000123' | bc | paste -sd+ | bc
+
+cat src/bin/input2_1.prod | sed 's/ /+/' \
+    | sed 's/\(A+Y\|B+Z\|C+X\)/6+\1/' \
+    | sed 's/\(A+Z\|B+X\|C+Y\)/0+\1/' \
+    | sed 's/\(A+X\|B+Y\|C+Z\)/3+\1/' \
+    | tr 'ABCXYZ' '000123' | bc | paste -sd+ | bc
+
+cat src/bin/input2_1.test | sed 's/ /+/' \
+    | sed 's/\(.*X\)/0+\1/' \
+    | sed 's/\(.*Y\)/3+\1/' \
+    | sed 's/\(.*Z\)/6+\1/' \
+    | sed 's/A+X/A+Z/' \
+    | sed 's/C+X/C+Y/' \
+    | sed 's/A+Y/A+X/' \
+    | sed 's/C+Y/C+Z/' \
+    | sed 's/A+Z/A+Y/' \
+    | sed 's/C+Z/C+X/' \
+    | tr 'ABCXYZ' '000123' | bc | paste -sd+ | bc
+
+cat src/bin/input2_1.prod | sed 's/ //' \
+    | sed 's/\(.*X\)/0+\1/' \
+    | sed 's/\(.*Y\)/3+\1/' \
+    | sed 's/\(.*Z\)/6+\1/' \
+    | sed 's/BX\|AY\|CZ/1/' \
+    | sed 's/AZ\|BY\|CX/2/' \
+    | sed 's/AX\|CY\|BZ/3/' \
+    | bc | paste -sd+ | bc
