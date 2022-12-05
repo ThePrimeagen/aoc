@@ -95,15 +95,7 @@ fn main() -> Result<()> {
         .map(|x| x.value)
         .sum();
 
-    let mut values = vec![Rc::new(Foo {}), Rc::new(Foo {}), Rc::new(Foo {})];
-    let last_foo = values.last().unwrap().clone();
-
-    for x in &values {
-    }
-
-    values.pop();
-
-    println!("Daddy {:?}", last_foo);
+    println!("Daddy {:?}", values);
     return Ok(());
 }
 
