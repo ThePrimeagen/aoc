@@ -23,6 +23,7 @@ fn main() -> Result<()> {
         })
         .collect();
 
+
     max.sort_by(|a, b| b.cmp(a));
 
     println!("max me daddy {:?}", max

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# i never learn with my naming conventions
+# i love you mom
+
+counter=1
+while [[ $counter -lt 300000 ]]; do
+    cat out >> long
+    counter=$(($counter + 1))
+done
+
