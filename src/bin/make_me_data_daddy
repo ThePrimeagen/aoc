@@ -8,3 +8,9 @@ while [[ $counter -lt 300000 ]]; do
     counter=$(($counter + 1))
 done
 
+cat end >> long;
+
+# i get it, i suck at this crap
+tr -d "\n\r " < long > l2
+rm long
+mv l2 long
