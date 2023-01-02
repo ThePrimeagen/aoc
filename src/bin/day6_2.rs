@@ -2,7 +2,7 @@ use std::{collections::HashSet, sync::mpsc::Receiver};
 
 use criterion::black_box;
 
-const PROD: &'static str = "qvllndllhzhfzhhdzhddhjdjggvnvhvccmffwllqgqmmfjfqfhhtrrzczjczzlplddfpptqqfbqffmnmjnnqppfjfccgnnmqqsvvdbbgppjvpjvpjjctjjttwtrrdldlcddrvddqndqnqwqwzwfwwzczggcppgzpzhpzhppprfffbhhwmhhtftstrsrvsrvsrvvshvssnwwpllhfhnnfflcltlblzlqlvqlvlcldcccpptggtdgdjdbbrggmbmnncscbssqrrjddvcvgvfflpppgpvphvphhpcpzpzvvctvctvthtwtfwwbrrhhlplmlwwlqlnlhhtmhmmqlqplllrvrgvrvrffzfgfjfjtjmjvmjmwmvvjffmpfphfhvfvmfvmmhpphhltthgttgccqggpzpfpqpcpvcpvcvvqtqvqbbrlrtllmrmllhmhvmhhvzhvzvrrrzjzbbtvvbgvbbfnnqndqnnpnbnbnlnggwqggmgmqmgmbbmccgqcqbccpvcvnnhvvrvlrrcwrcwrcwrwbrwwzbwbdbfddpttntzzjszsnznbndnzngzgccjrcjchcffmlmqqlrqqzsqzzsbsnsttzpztpzpggzrrttbqqplpqlqjjqcqvccdzdccthccvfcvvqvhqhfhhzwzpzwppgpttntssflfjjrwrqrjrppptlltptpvttpfpwpswpppzzsrzssqllbnlljpllrjllsrlrhrdrmdrmrrpsrprnrffgrffdqdhdqhhrhggwqqlddsbsqbqtqdtdhdvhhbdhdzhdhhtrrppzddgfgzgpzpvpfpnpptggltggbnbppqffzfrzzzsbsrrdgrddwsdsqddhpdpbpvpfvppfsfgfngffzmzbzlblclsccvqvqmmjtjqtjjlcjllsddjqddhldlvlrrbgbrgbrrdzzpfpggqnqbqrrqbbgjgppqgpgwgqqndncndnpdnnbvbnvnwnjjgppzlplqqdgqghqgqzggjssqmmwwcfcpptrpprggrppgbplmzwmdtnpqwzcrthqbppwbgcvgqrpfpnbscnhvrllpvpqwnsslcjrqtvdccprvqfrpswtpvzdzlgtmmvppdmhgdbbsmrbqpqspdhpqgfjznqzphrnggcbzhdqrgvzcfzrhtrlssgmjjghqsjtghhnwjffqrrfslfnsvvdvfjqbfpffrrstdhggvbfwtfpfgswqlfdrnjpjmwzptlbmwgghgwqrphcrvfmhrplllgbnjlprllmjwccphsflntgpnbmdbfqcdsbgvrnfznfrlcfvswqfrqvdnbjsflnsmlcrdstzppmcvbgdtcvgztbdzqbwhmwcfvbwjjcdgbnwjwzrrdqhpgscwtnztjsfstzfwftcldjgvdvwbzrlbdslwttbqpnlwbjcjwqgtrgcglsgtdqbqbnqznptzzbwffwlwzvvtdpcjbvhnswzptclpbndcdvsfmcrmwwgzdfsszqjjdztmtsqgfqzjpctfdpwnzbpnzzwngqnghntblndfrnjzdrmgbqmzbdqfzctrgshwqgfgqssqjltrqlzjswjhmpgwwjdwcjpnsvgrvbfpmlmmwzmbdjwsrjthppfrccjgnmwlvqlprgslbwtbbzlqbznczmsmhsfdcqnwblprcpbzzwfllbnldvpjcwsdhglrzjsptmsjdjqzsmgvhjfjrrtvvbjlmzjsntnrggwbpjlrjggfgqzvswtggthzfmfjnmrzrttbzqpwpsnmdtnbfblpfgslgcmjlbdpshnnrbhvwsbrnvdmjqhvhdjhbfzjmqrmqmdthhzvnrmqcnbtwcdjdqfvdgvmfbhrfqnmdncrddggtcppjlznbsnntppjtnsqsrjwvfrzpnzqcrzhhdflfmmtmwcvtpzbqhdwsczffcqhtdbdjblmgnrmhlqcsvcpgghhvwqhdtzpzlpfllchzltqgcwgfqnbzhgzmdwqdlwnvhqmpqjqnjbhjctslghdqvctdmjfwdfpdjnhdndzwsfjzlmsbmfmzvnvpqgqhtngvgqmlrrzsfmwlcwsscvghjvrzjjqbnplnjzqswpblwzwczhwbhhnjmctnmwlbqqfmnlwdcrptlmfjpjrnpcvmhffjhwhmntdzpdjzwzhrrsdvmjlwdtcpvjfmfzfsrgjghhlvmjjjczgmhvrfpgqbnhldwbrjgzmnszzbssfzcggrwmdfvddwsdmnwtwfwlfnwlvzlctfblbtrjvcwjjdljplcrjhwqslppwwtvfqwsjlfmdznmcdzdmgvmmsrfcclcvhtrhlsjzrbjwrjlfnvqhqvmpzmdttnbhfcvnqlrqbcsvtvwfccjstjpmhqgwlnrzjjmfdszflmglrdbpqhqhqsdfzrcljbdvvnlcqfllmnqcjfzjppdsjwshfschzqbnwfqnpwhqnmwsjbtcgvrljsrtzvcvghcjjlqsngglcggqpntrrhbjpbfhmvpltmnfmfdtwnczwfbvjcqnhvppjftwvwsrlhvvcjtsfptpqgrmrqwwddnqmnmfgrlnphbpqhhhvglqgtwvnwvnbssftmwttmfrffwtzhrpqspclvgchwqwcsgwqwwvpgcwngrcfmhbhflwfbfchlphdzdcrflfmfclsngtlwrqcrsgrdzcpdsvvcdbhgtljmbntbbcqgjqfsbfwzlfsnljpjdcnmjlqrwpmlvwgdlrrdgfhdqhzgltmclzgzzhmrbggsmgtpqdrgmjtlzwstrwbpvhppvsmdqvvwwglzjgdswjszqmrdbmshbhhcstpcsjdbvgjnvcmvhbtclrlmlgnvppgvncsrfchdbqjrclwwlnchmcgvshfsbsvvcvjrsgjlnsfqtqmgntffwnqjtldcqbcqhsgztllstswwqnfrswpchqhnfzzzszqjztzfrgrbjdbjlpvqfqrlrmmpbfbbcclrgmnlzwqrjhqrstswjpgsrtnlwsbqthzpvdzllzqmdmbvvtcztftvlwphhjzbfnrvccfmhmvmzlbrzlnppfzcsffjvjmbgpvlwgwszpztjpsrbnftqtdrbnljtbrjzzbwlsvtwtlwptdtnmtncvcblcmdngjzmctlqtzchncccnwjzrrmmmnllbhrnhwtqjsnvcslrqjfbfndqvdlrjshdzmlprtzbtnhthdqhplwzdbnjmgzlzrbzrvrqnflwfmsmbssqnbcddnvdpltpmplpdzvtjrslcdcnrdplwtjtvctwfzhlvwwqqtbqcjjwhhnpmvgzhqmqfgthwbphrmrtdghchsmwghdqjgjgmpddbrtngtvhqgjfrplrdgpbnhqvswrmqhcmsqvsqmqsgwjndwjrbrhvrctmmrmfwpsgfgdlrzpslpflgvwrgcthgcrnhgrzsmqdgdssjgspfhmqfmjfpmwqhnfjdvqzhpndvnbmqglbrjmdrwgmgctrgzpsdvfbmcstcslblmvnprphntgslmlrqwthrndrhtbccgzzfsglhgqztcsnqjwfzbzlvrpbvswbhrwdsrhrrpnrmsbvbvjccbdsdcfrrzpgwjtnnnvjwlcppwzdqsbdzpfjplrlfgvjpsmbzwpwlghnvqgddfjvrsztrpzlfgmqqzrfcgglghndbhgbmldglclhldljjdslvhzshshtqwhqnbzhvqrcmwdmcmhjcrmdmhrwnwcbhvbbrwrbtfdnztwnbpdfjfhgrmcpngftsvbsmsptnwcvvllnmbnsntbzmwnhfdptbtzswtjzdqwjdhprnjwvhzpscjvlsgrhdrmmrmhzhwwtslzdjqmzfncnmgplhnmwrvqhslvchtjcmpzpjpnpfbjptvvwcsmhgdjtsqrjlfpnfdncpqqmpgpvtlvwljlsqbnhtsqgfwlsmdjpgtvgjvjcrnnzmbllqzlrfdnlffgmtphhhgbcjgdlpzqpwmjwtcmdrsmtnmddftwczbsddtppsptbwfvpnfnsqmsgcfqfmnzffzqgcdvwzrgdwhmnzmrlhcdpdsltnsmjzdqwmmpwvjqbbwsrfgzh";
+// const PROD: &'static str = "qvllndllhzhfzhhdzhddhjdjggvnvhvccmffwllqgqmmfjfqfhhtrrzczjczzlplddfpptqqfbqffmnmjnnqppfjfccgnnmqqsvvdbbgppjvpjvpjjctjjttwtrrdldlcddrvddqndqnqwqwzwfwwzczggcppgzpzhpzhppprfffbhhwmhhtftstrsrvsrvsrvvshvssnwwpllhfhnnfflcltlblzlqlvqlvlcldcccpptggtdgdjdbbrggmbmnncscbssqrrjddvcvgvfflpppgpvphvphhpcpzpzvvctvctvthtwtfwwbrrhhlplmlwwlqlnlhhtmhmmqlqplllrvrgvrvrffzfgfjfjtjmjvmjmwmvvjffmpfphfhvfvmfvmmhpphhltthgttgccqggpzpfpqpcpvcpvcvvqtqvqbbrlrtllmrmllhmhvmhhvzhvzvrrrzjzbbtvvbgvbbfnnqndqnnpnbnbnlnggwqggmgmqmgmbbmccgqcqbccpvcvnnhvvrvlrrcwrcwrcwrwbrwwzbwbdbfddpttntzzjszsnznbndnzngzgccjrcjchcffmlmqqlrqqzsqzzsbsnsttzpztpzpggzrrttbqqplpqlqjjqcqvccdzdccthccvfcvvqvhqhfhhzwzpzwppgpttntssflfjjrwrqrjrppptlltptpvttpfpwpswpppzzsrzssqllbnlljpllrjllsrlrhrdrmdrmrrpsrprnrffgrffdqdhdqhhrhggwqqlddsbsqbqtqdtdhdvhhbdhdzhdhhtrrppzddgfgzgpzpvpfpnpptggltggbnbppqffzfrzzzsbsrrdgrddwsdsqddhpdpbpvpfvppfsfgfngffzmzbzlblclsccvqvqmmjtjqtjjlcjllsddjqddhldlvlrrbgbrgbrrdzzpfpggqnqbqrrqbbgjgppqgpgwgqqndncndnpdnnbvbnvnwnjjgppzlplqqdgqghqgqzggjssqmmwwcfcpptrpprggrppgbplmzwmdtnpqwzcrthqbppwbgcvgqrpfpnbscnhvrllpvpqwnsslcjrqtvdccprvqfrpswtpvzdzlgtmmvppdmhgdbbsmrbqpqspdhpqgfjznqzphrnggcbzhdqrgvzcfzrhtrlssgmjjghqsjtghhnwjffqrrfslfnsvvdvfjqbfpffrrstdhggvbfwtfpfgswqlfdrnjpjmwzptlbmwgghgwqrphcrvfmhrplllgbnjlprllmjwccphsflntgpnbmdbfqcdsbgvrnfznfrlcfvswqfrqvdnbjsflnsmlcrdstzppmcvbgdtcvgztbdzqbwhmwcfvbwjjcdgbnwjwzrrdqhpgscwtnztjsfstzfwftcldjgvdvwbzrlbdslwttbqpnlwbjcjwqgtrgcglsgtdqbqbnqznptzzbwffwlwzvvtdpcjbvhnswzptclpbndcdvsfmcrmwwgzdfsszqjjdztmtsqgfqzjpctfdpwnzbpnzzwngqnghntblndfrnjzdrmgbqmzbdqfzctrgshwqgfgqssqjltrqlzjswjhmpgwwjdwcjpnsvgrvbfpmlmmwzmbdjwsrjthppfrccjgnmwlvqlprgslbwtbbzlqbznczmsmhsfdcqnwblprcpbzzwfllbnldvpjcwsdhglrzjsptmsjdjqzsmgvhjfjrrtvvbjlmzjsntnrggwbpjlrjggfgqzvswtggthzfmfjnmrzrttbzqpwpsnmdtnbfblpfgslgcmjlbdpshnnrbhvwsbrnvdmjqhvhdjhbfzjmqrmqmdthhzvnrmqcnbtwcdjdqfvdgvmfbhrfqnmdncrddggtcppjlznbsnntppjtnsqsrjwvfrzpnzqcrzhhdflfmmtmwcvtpzbqhdwsczffcqhtdbdjblmgnrmhlqcsvcpgghhvwqhdtzpzlpfllchzltqgcwgfqnbzhgzmdwqdlwnvhqmpqjqnjbhjctslghdqvctdmjfwdfpdjnhdndzwsfjzlmsbmfmzvnvpqgqhtngvgqmlrrzsfmwlcwsscvghjvrzjjqbnplnjzqswpblwzwczhwbhhnjmctnmwlbqqfmnlwdcrptlmfjpjrnpcvmhffjhwhmntdzpdjzwzhrrsdvmjlwdtcpvjfmfzfsrgjghhlvmjjjczgmhvrfpgqbnhldwbrjgzmnszzbssfzcggrwmdfvddwsdmnwtwfwlfnwlvzlctfblbtrjvcwjjdljplcrjhwqslppwwtvfqwsjlfmdznmcdzdmgvmmsrfcclcvhtrhlsjzrbjwrjlfnvqhqvmpzmdttnbhfcvnqlrqbcsvtvwfccjstjpmhqgwlnrzjjmfdszflmglrdbpqhqhqsdfzrcljbdvvnlcqfllmnqcjfzjppdsjwshfschzqbnwfqnpwhqnmwsjbtcgvrljsrtzvcvghcjjlqsngglcggqpntrrhbjpbfhmvpltmnfmfdtwnczwfbvjcqnhvppjftwvwsrlhvvcjtsfptpqgrmrqwwddnqmnmfgrlnphbpqhhhvglqgtwvnwvnbssftmwttmfrffwtzhrpqspclvgchwqwcsgwqwwvpgcwngrcfmhbhflwfbfchlphdzdcrflfmfclsngtlwrqcrsgrdzcpdsvvcdbhgtljmbntbbcqgjqfsbfwzlfsnljpjdcnmjlqrwpmlvwgdlrrdgfhdqhzgltmclzgzzhmrbggsmgtpqdrgmjtlzwstrwbpvhppvsmdqvvwwglzjgdswjszqmrdbmshbhhcstpcsjdbvgjnvcmvhbtclrlmlgnvppgvncsrfchdbqjrclwwlnchmcgvshfsbsvvcvjrsgjlnsfqtqmgntffwnqjtldcqbcqhsgztllstswwqnfrswpchqhnfzzzszqjztzfrgrbjdbjlpvqfqrlrmmpbfbbcclrgmnlzwqrjhqrstswjpgsrtnlwsbqthzpvdzllzqmdmbvvtcztftvlwphhjzbfnrvccfmhmvmzlbrzlnppfzcsffjvjmbgpvlwgwszpztjpsrbnftqtdrbnljtbrjzzbwlsvtwtlwptdtnmtncvcblcmdngjzmctlqtzchncccnwjzrrmmmnllbhrnhwtqjsnvcslrqjfbfndqvdlrjshdzmlprtzbtnhthdqhplwzdbnjmgzlzrbzrvrqnflwfmsmbssqnbcddnvdpltpmplpdzvtjrslcdcnrdplwtjtvctwfzhlvwwqqtbqcjjwhhnpmvgzhqmqfgthwbphrmrtdghchsmwghdqjgjgmpddbrtngtvhqgjfrplrdgpbnhqvswrmqhcmsqvsqmqsgwjndwjrbrhvrctmmrmfwpsgfgdlrzpslpflgvwrgcthgcrnhgrzsmqdgdssjgspfhmqfmjfpmwqhnfjdvqzhpndvnbmqglbrjmdrwgmgctrgzpsdvfbmcstcslblmvnprphntgslmlrqwthrndrhtbccgzzfsglhgqztcsnqjwfzbzlvrpbvswbhrwdsrhrrpnrmsbvbvjccbdsdcfrrzpgwjtnnnvjwlcppwzdqsbdzpfjplrlfgvjpsmbzwpwlghnvqgddfjvrsztrpzlfgmqqzrfcgglghndbhgbmldglclhldljjdslvhzshshtqwhqnbzhvqrcmwdmcmhjcrmdmhrwnwcbhvbbrwrbtfdnztwnbpdfjfhgrmcpngftsvbsmsptnwcvvllnmbnsntbzmwnhfdptbtzswtjzdqwjdhprnjwvhzpscjvlsgrhdrmmrmhzhwwtslzdjqmzfncnmgplhnmwrvqhslvchtjcmpzpjpnpfbjptvvwcsmhgdjtsqrjlfpnfdncpqqmpgpvtlvwljlsqbnhtsqgfwlsmdjpgtvgjvjcrnnzmbllqzlrfdnlffgmtphhhgbcjgdlpzqpwmjwtcmdrsmtnmddftwczbsddtppsptbwfvpnfnsqmsgcfqfmnzffzqgcdvwzrgdwhmnzmrlhcdpdsltnsmjzdqwmmpwvjqbbwsrfgzh";
 
 fn join(rx: Receiver<Option<usize>>, max: usize) -> Option<usize> {
     let mut found = 0;
@@ -20,9 +20,11 @@ fn join(rx: Receiver<Option<usize>>, max: usize) -> Option<usize> {
     return None;
 }
 
+/*
 fn to_string(data: &[u8], start: usize, stop: usize) -> String {
     return data[start..=stop].iter().filter_map(|x| char::from_u32(*x as u32)).collect::<String>();
 }
+*/
 
 fn simple(i: &[u8]) -> usize {
     return i.windows(14)
@@ -83,68 +85,6 @@ fn faster(i: &[u8]) -> usize {
         })
         .map(|x| x + 14)
         .unwrap();
-}
-
-fn the_primeagen(data: &[u8], offset: usize, length: usize) -> Option<usize> {
-    let mut idx = offset + 14 - 1;
-    let data_len = offset + length;
-
-    while idx < data_len {
-        let mut left_len: usize = 0;
-        let mut left_idx: usize = idx;
-        let mut left: usize = 0;
-
-        loop {
-
-            // we have found the idx
-            if left_len == 14 {
-                return Some(idx + 1);
-            }
-
-            let res = left ^ (1 << (data[left_idx] % 32));
-            if res < left {
-                break;
-            }
-
-            left_idx = left_idx - 1;
-            left_len += 1;
-            left = res;
-        }
-
-        let mut right: usize = 0;
-        let mut right_len: usize = 0;
-        let mut right_idx: usize = idx + 1;
-        while right_idx < data_len {
-
-            // we have found the idx
-            if right_len == 14 {
-                return Some(idx + right_len + 1);
-            }
-
-            let res = right ^ (1 << (data[right_idx] % 32));
-            if res < right {
-                break;
-            }
-
-            right_idx += 1;
-            right_len += 1;
-            right = res;
-        }
-
-        let len = right_len + left_len;
-
-        if len == 14 && (right ^ left).count_ones() == 14 as u32 {
-            return Some(right_idx);
-        } else if len > 14 {
-            if let Some(x) = david_a_perez(&data[left_idx..=right_idx]) {
-                return Some(x + left_idx);
-            }
-        }
-
-        idx += 14;
-    }
-
-    return None;
 }
 
 fn david_a_perez_async(data: &'static [u8], cpus: usize) -> Option<usize> {
@@ -327,26 +267,8 @@ pub fn david_a_perez_proc(input: &[u8]) -> Option<usize> {
     return None;
 }
 
-fn theprimeagen(data: &[u8]) -> Option<usize> {
-    return data
-        .windows(14)
-        .position(move |set| {
-            let mut data: u32 = 0;
-            for &c in set {
-                let prev = data;
-                data |= 1 << (c - b'a');
-                if prev == data {
-                    return false;
-                }
-            }
-
-            return true;
-        });
-}
-
 fn main() {
 
-    let count = 14;
     let string = std::fs::read_to_string("long").unwrap();
     let string: &'static String = Box::leak(Box::new(string));
     // let string = PROD;
@@ -354,196 +276,48 @@ fn main() {
 
     let mut vec = vec![];
 
-    /*
-    for i in 0..10 {
+    for _ in 0..10 {
         let now = std::time::Instant::now();
-        let res = simple(black_box(bytes));
+        black_box(simple(black_box(bytes)));
         vec.push((now.elapsed(), "simple"));
-
-        println!("simple {} {:?}", i, res);
     }
 
-    for i in 0..10 {
+    for _ in 0..10 {
         let now = std::time::Instant::now();
-        let res = faster(black_box(bytes));
+        black_box(faster(black_box(bytes)));
         vec.push((now.elapsed(), "faster"));
-
-        println!("faster {} {:?}", i, res);
     }
 
-    for i in 0..10 {
+    for _ in 0..10 {
         let now = std::time::Instant::now();
-        let res = faster(black_box(bytes));
-        vec.push((now.elapsed(), "faster"));
-
-        println!("faster {} {:?}", i, res);
+        black_box(faster_vec(black_box(bytes)));
+        vec.push((now.elapsed(), "faster_vec"));
     }
-    */
 
-    // So each loop step share part of the same ops. The compiler was able to extract those shared instruction with a couple simd ones to make them in parallel.
-    //
+    for _ in 0..10 {
         let now = std::time::Instant::now();
-        let res = black_box(david_a_perez(black_box(bytes)));
-        vec.push((now.elapsed(), "david_a_perez"));
+        black_box(faster_arr(black_box(bytes)));
+        vec.push((now.elapsed(), "faster_arr"));
+    }
 
-        println!("david_a_perez {:?} {:?}", now.elapsed(), res);
-
+    for _ in 0..10 {
         let now = std::time::Instant::now();
-        let res = black_box(benny(black_box(bytes)));
+        black_box(benny(black_box(bytes)));
         vec.push((now.elapsed(), "benny"));
-
-        println!("benny {:?} {:?}", now.elapsed(), res);
-
-        /*
-        let now = std::time::Instant::now();
-        let res = faster(black_box(bytes));
-        vec.push((now.elapsed(), "faster"));
-
-        println!("faster_vec {:?} {:?}", now.elapsed(), res);
-        */
-
-    /*
-    for i in 0..10 {
-        let now = std::time::Instant::now();
-        let res = theprimeagen(black_box(bytes));
-        vec.push((now.elapsed(), "theprimeagen"));
-
-        println!("theprimeagen {} {:?}", i, res);
     }
 
-    for i in 0..10 {
+    for _ in 0..10 {
         let now = std::time::Instant::now();
-        let res = benny(black_box(bytes));
-        vec.push((now.elapsed(), "benny"));
-
-        println!("benny {} {:?}", i, res);
-    }
-
-    for i in 0..10 {
-        let now = std::time::Instant::now();
-        let res = david_a_perez(black_box(bytes));
+        black_box(david_a_perez(black_box(bytes)));
         vec.push((now.elapsed(), "david_a_perez"));
-
-        println!("david_a_perez {} {:?}", i, res);
     }
 
-    for i in 0..10 {
+    for _ in 0..10 {
         let now = std::time::Instant::now();
-        let res = david_a_perez_proc(black_box(bytes));
-        vec.push((now.elapsed(), "david_a_perez_proc"));
-
-        println!("david_a_perez_proc {} {:?}", i, res);
-    }
-
-    for i in 0..10 {
-        let now = std::time::Instant::now();
-        let res = david_a_perez_async(black_box(bytes), 18);
+        black_box(david_a_perez_async(black_box(bytes), 18));
         vec.push((now.elapsed(), "dap_async"));
-
-        println!("dap_async {} {:?}", i, res);
     }
 
-    println!("timings {}", vec.iter().map(|x| format!("\n{:?}", x)).collect::<String>());
-
-
-
-
-       let now = std::time::Instant::now();
-       let result = david_a_perez_the_primeagen(black_box(bytes));
-       println!("david_a_perez_the_primeagen({:?}): {}", result, now.elapsed().as_millis());
-
-    let now = std::time::Instant::now();
-    let result = simple(string, count);
-    println!("simple({}): {}", result, now.elapsed().as_millis());
-
-    let now = std::time::Instant::now();
-    let result = faster(string, count);
-    println!("faster({}): {}", result, now.elapsed().as_millis());
-
-    let now = std::time::Instant::now();
-    let result = benny_original(black_box(bytes), black_box(count));
-    println!("benny_og({:?}): {}", result, now.elapsed().as_millis());
-
-    let now = std::time::Instant::now();
-    let result = the_primeagen(black_box(bytes), black_box(count), 0, bytes.len());
-    println!("the_primeagen({:?}): {}", result, now.elapsed().as_millis());
-
-    let now = std::time::Instant::now();
-    let result = benny(black_box(bytes), black_box(count));
-    println!("benny({:?}): {}", result, now.elapsed().as_millis());
-
-    let now = std::time::Instant::now();
-    let result = david_a_perez_proc(black_box(bytes), black_box(count));
-    println!("david_a_perez({:?}): {}", result, now.elapsed().as_millis());
-    */
-
-    println!("timings {}", vec.iter().map(|x| format!("\n{:?}", x)).collect::<String>());
+    println!("{}", vec.iter().map(|x| format!("\n{} {:?}", x.1, x.0)).collect::<String>());
 }
 
-
-#[cfg(test)]
-mod test {
-    use crate::{fastester, fastest, PROD};
-
-    #[test]
-    fn test_cond_1() {
-        let str = "beginxxxxxxx";
-        let result = fastester(str.as_bytes(), 5, 0, str.len());
-
-        assert_eq!(Some(5), result);
-    }
-
-    #[test]
-    fn test_cond_2() {
-        let str = "xxxxxbeginxxxxxxx";
-        let result = fastester(str.as_bytes(), 5, 0, str.len());
-
-        assert_eq!(Some(10), result);
-    }
-
-    #[test]
-    fn test_cond_split_even() {
-        let str = "xxxbeginxxxxxxx";
-        let result = fastester(str.as_bytes(), 6, 0, str.len());
-
-        assert_eq!(Some(9), result);
-    }
-
-    #[test]
-    fn test_cond_split_even_with_extra() {
-        let str = "xxybeginxxxxxxx";
-        let result = fastester(str.as_bytes(), 6, 0, str.len());
-        assert_eq!(Some(9), result);
-    }
-
-    #[test]
-    fn test_cond_split_odd_left_last() {
-        let str = "xxybeginxxxxxxx";
-        let result = fastester(str.as_bytes(), 7, 0, str.len());
-        assert_eq!(Some(9), result);
-    }
-
-    #[test]
-    fn test_cond_split_odd_right_last() {
-        let str = "xxxxxxxxybeginxxxxxxx";
-        let result = fastester(str.as_bytes(), 7, 0, str.len());
-        assert_eq!(Some(14), result);
-    }
-
-    #[test]
-    fn test_all() {
-        let f = fastest(PROD.as_bytes(), 14);
-        let fer = fastester(PROD.as_bytes(), 14, 0, PROD.len());
-        assert_eq!(f, fer.unwrap());
-    }
-
-    #[test]
-    fn test_big() {
-        let string = std::fs::read_to_string("long").expect("please generate the file first, script in src dir");
-        let string: &'static String = Box::leak(Box::new(string));
-
-        let f = fastest(string.as_bytes(), 14);
-        let fer = fastester(string.as_bytes(), 14, 0, string.len());
-        assert_eq!(f, fer.unwrap());
-    }
-}
