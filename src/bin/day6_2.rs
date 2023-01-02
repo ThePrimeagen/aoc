@@ -33,6 +33,43 @@ fn simple(i: &[u8]) -> usize {
         .unwrap();
 }
 
+fn faster_vec(i: &[u8]) -> usize {
+    return i.windows(14)
+        .position(|w| {
+            let mut vec = Vec::with_capacity(14);
+            for x in w {
+                if vec.contains(x) {
+                    return false;
+                }
+
+                vec.push(*x);
+            }
+            return true;
+        })
+        .map(|x| x + 14)
+        .unwrap();
+}
+
+fn faster_arr(i: &[u8]) -> usize {
+    return i.windows(14)
+        .position(|w| {
+            let mut arr = [0u8; 14];
+            let mut idx = 0;
+            for x in w {
+                for i in 0..idx {
+                    if arr[i] == *x {
+                        return false;
+                    }
+                }
+                arr[idx] = *x;
+                idx += 1;
+            }
+            return true;
+        })
+        .map(|x| x + 14)
+        .unwrap();
+}
+
 fn faster(i: &[u8]) -> usize {
     return i.windows(14)
         .position(|w| {
@@ -256,7 +293,7 @@ pub fn david_a_perez_the_primeagen(input: &[u8]) -> Option<usize> {
             let unique_count = (left_state ^ right_state).count_ones();
             let unique_count = (diff - unique_count as usize) / 2 + unique_count as usize;
             if unique_count >= 14 {
-                if let Some(x) = david_a_perez(&input[idx - left..idx + right]) {
+                if let Some(x) = benny(&input[idx - left..idx + right]) {
                     return Some(x);
                 }
             }
@@ -317,6 +354,7 @@ fn main() {
 
     let mut vec = vec![];
 
+    /*
     for i in 0..10 {
         let now = std::time::Instant::now();
         let res = simple(black_box(bytes));
@@ -333,6 +371,38 @@ fn main() {
         println!("faster {} {:?}", i, res);
     }
 
+    for i in 0..10 {
+        let now = std::time::Instant::now();
+        let res = faster(black_box(bytes));
+        vec.push((now.elapsed(), "faster"));
+
+        println!("faster {} {:?}", i, res);
+    }
+    */
+
+    // So each loop step share part of the same ops. The compiler was able to extract those shared instruction with a couple simd ones to make them in parallel.
+    //
+        let now = std::time::Instant::now();
+        let res = black_box(david_a_perez(black_box(bytes)));
+        vec.push((now.elapsed(), "david_a_perez"));
+
+        println!("david_a_perez {:?} {:?}", now.elapsed(), res);
+
+        let now = std::time::Instant::now();
+        let res = black_box(benny(black_box(bytes)));
+        vec.push((now.elapsed(), "benny"));
+
+        println!("benny {:?} {:?}", now.elapsed(), res);
+
+        /*
+        let now = std::time::Instant::now();
+        let res = faster(black_box(bytes));
+        vec.push((now.elapsed(), "faster"));
+
+        println!("faster_vec {:?} {:?}", now.elapsed(), res);
+        */
+
+    /*
     for i in 0..10 {
         let now = std::time::Instant::now();
         let res = theprimeagen(black_box(bytes));
@@ -376,7 +446,7 @@ fn main() {
     println!("timings {}", vec.iter().map(|x| format!("\n{:?}", x)).collect::<String>());
 
 
-    /*
+
 
        let now = std::time::Instant::now();
        let result = david_a_perez_the_primeagen(black_box(bytes));
@@ -407,6 +477,7 @@ fn main() {
     println!("david_a_perez({:?}): {}", result, now.elapsed().as_millis());
     */
 
+    println!("timings {}", vec.iter().map(|x| format!("\n{:?}", x)).collect::<String>());
 }
 
 
