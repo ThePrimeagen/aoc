@@ -56,6 +56,35 @@ function faster_obj(data) {
     }
 }
 
+function benny(data) {
+    let filter = 0;
+    let ones = 0;
+    for (let i = 0; i < 13; ++i) {
+        const next = filter ^ (1 << (data[i] % 32));
+        ones += next > filter ? 1 : -1;
+        filter = next;
+    }
+
+    for (let i = 0; i + 14 < data.length; ++i) {
+        let first = data[i];
+        let last = data[i + 13];
+
+        const last_filter = filter ^ (1 << (last % 32));
+        ones += last_filter > filter ? 1 : -1;
+        filter = last_filter;
+
+        if (ones === 14) {
+            return i + 14;
+        }
+
+        const first_filter = filter ^ (1 << (first % 32));
+        ones += first_filter > filter ? 1 : -1;
+        filter = first_filter;
+    }
+
+    return -1;
+}
+
 
 function time(f) {
     const start = Date.now();
@@ -63,6 +92,20 @@ function time(f) {
     return Date.now() - start;
 }
 
-console.log("set", time(faster_set));
-console.log("obj", time(faster_obj));
-console.log("array", time(faster_arr));
+
+for (let i = 0; i < 10; ++i) {
+    console.log("obj,", time(faster_obj));
+}
+
+for (let i = 0; i < 10; ++i) {
+    console.log("set,", time(faster_set));
+}
+
+for (let i = 0; i < 10; ++i) {
+    console.log("array,", time(faster_arr));
+}
+
+for (let i = 0; i < 10; ++i) {
+    console.log("benny", time(benny));
+}
+
