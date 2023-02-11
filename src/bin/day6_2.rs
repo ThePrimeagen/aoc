@@ -126,6 +126,7 @@ pub fn benny(input: &[u8]) -> Option<usize> {
         filter ^= 1 << (first % 32);
         res
     })
+    .map(|x| x + 14)
 }
 
 struct ReverseIter {
@@ -166,7 +167,7 @@ pub fn david_a_perez_2(input: &'static [u8]) -> Option<usize> {
         }) {
             idx += 13 - pos + 1;
         } else if state.count_ones() == 14 as u32 {
-            return Some(idx);
+            return Some(idx + 14);
         }
     }
     return None;
@@ -185,7 +186,7 @@ pub fn david_a_perez(input: &[u8]) -> Option<usize> {
         }) {
             idx += pos + 1;
         } else if state.count_ones() == 14 as u32 {
-            return Some(idx);
+            return Some(idx + 14);
         }
     }
     return None;
@@ -260,7 +261,7 @@ pub fn david_a_perez_proc(input: &[u8]) -> Option<usize> {
         }
 
     if pos < 0 {
-            return Some(idx);
+            return Some(idx + 14);
         }
         idx += (pos + 1) as usize;
     }
